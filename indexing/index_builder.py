@@ -1,8 +1,11 @@
 import time
+import os
 from typing import List, Dict
-from config.settings import CHUNK_SIZE, CHUNK_OVERLAP
+from config.settings import CHUNK_SIZE
 from llm.gemini_client import get_embedding
-from db.vector_store import VectorStore # Import the new DB class
+from db.vector_store import VectorStore
+# Import the new smart chunker
+from indexing.smart_splitter import smart_chunk_code
 
 def load_file_content(path: str) -> str:
     try:
@@ -20,49 +23,37 @@ def make_documents(file_paths: List[str]) -> List[Dict]:
         docs.append({"path": path, "content": content})
     return docs
 
-def chunk_text(text: str, chunk_size: int, overlap: int) -> List[str]:
-    chunks = []
-    start = 0
-    length = len(text)
-    while start < length:
-        end = min(start + chunk_size, length)
-        chunks.append(text[start:end])
-        if end == length:
-            break
-        start = end - overlap
-        if start < 0:
-            start = 0
-    return chunks
-
 def build_index(documents: List[Dict]):
     """
     Generates embeddings and saves them to ChromaDB.
-    No longer returns a list; saves directly to DB.
     """
-    # 1. Initialize DB and clear old data (since we are loading a NEW repo)
     store = VectorStore()
     store.clear_collection()
     
-    # 2. Chunking
     raw_chunks = []
+    
+    # --- CHANGED: Use Smart Chunking ---
     for doc in documents:
         text = doc["content"]
         path = doc["path"]
-        chunks = chunk_text(text, CHUNK_SIZE, CHUNK_OVERLAP)
+        _, ext = os.path.splitext(path)
+        
+        # Call the new smart chunker
+        # It handles context injection automatically
+        chunks = smart_chunk_code(text, ext, CHUNK_SIZE)
+        
         for i, ch in enumerate(chunks):
             raw_chunks.append({
                 "path": path,
                 "chunk_id": i,
                 "chunk": ch
             })
+    # -----------------------------------
 
     total_chunks = len(raw_chunks)
-    print(f"Generated {total_chunks} text chunks. Starting embedding generation...")
+    print(f"Generated {total_chunks} smart chunks. Starting embedding generation...")
 
-    # 3. Embed & Save Loop
-    # We will accumulate a batch and save it to reduce DB calls
     batch = []
-    
     for i, item in enumerate(raw_chunks):
         if i % 10 == 0:
             print(f"Processing chunk {i}/{total_chunks}...")
@@ -72,14 +63,12 @@ def build_index(documents: List[Dict]):
             item["embedding"] = vector
             batch.append(item)
         
-        # Save every 50 chunks to DB to be safe
         if len(batch) >= 50:
             store.add_documents(batch)
             batch = []
         
-        time.sleep(0.1) # Rate limiting
+        time.sleep(0.1) 
 
-    # Save remaining
     if batch:
         store.add_documents(batch)
 
