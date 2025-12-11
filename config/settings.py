@@ -2,17 +2,13 @@
 import os
 from dotenv import load_dotenv
 
-# Load .env file
 load_dotenv()
 
 GEMINI_API_KEY = os.getenv("GEMINI_API_KEY")
+REPOS_BASE_DIR = "downloaded_repos"
 
-if not GEMINI_API_KEY:
-    raise ValueError("GEMINI_API_KEY is not set in .env")
-
-# Repo base directory (where we clone / download)
-REPOS_BASE_DIR = os.path.join(os.path.dirname(os.path.dirname(__file__)), "repos")
-
-# Chunking configuration
-CHUNK_SIZE = 1200
+CHUNK_SIZE = 1000
 CHUNK_OVERLAP = 200
+
+# This is the standard embedding model
+EMBEDDING_MODEL = "models/text-embedding-004"
