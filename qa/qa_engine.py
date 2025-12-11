@@ -1,4 +1,3 @@
-# qa/qa_engine.py
 from typing import List, Dict
 from llm.gemini_client import ask_gemini
 from llm.retriever import retrieve_relevant_chunks
@@ -21,8 +20,10 @@ def build_context_snippet(chunks: List[Dict]) -> str:
         parts.append(header + "\n" + body)
     return "\n\n---\n\n".join(parts)
 
-def answer_question(query: str, index: List[Dict]) -> str:
-    relevant_chunks = retrieve_relevant_chunks(query, index, top_k=8)
+# Note: We removed the 'index' argument
+def answer_question(query: str) -> str:
+    relevant_chunks = retrieve_relevant_chunks(query, top_k=8)
+    
     if not relevant_chunks:
         return "I could not find relevant code or docs for that question in this repository."
 

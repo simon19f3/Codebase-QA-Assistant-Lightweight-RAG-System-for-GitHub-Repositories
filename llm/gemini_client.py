@@ -1,21 +1,18 @@
-# llm/gemini_client.py
 import google.generativeai as genai
-from config.settings import GEMINI_API_KEY, EMBEDDING_MODEL
+import time
+from config.settings import GEMINI_API_KEY, GENERATION_MODEL, EMBEDDING_MODEL
 
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-# UPDATED MODEL NAME based on your list
-MODEL_NAME = "gemini-2.5-flash"   # <--- CHANGED THIS
-
 def ask_gemini(system_prompt: str, user_prompt: str) -> str:
     """
     Sends a combined prompt to Gemini and returns the text answer.
     """
     try:
-        model = genai.GenerativeModel(MODEL_NAME)
+        model = genai.GenerativeModel(GENERATION_MODEL)
         full_prompt = f"{system_prompt}\n\n{user_prompt}"
         response = model.generate_content(full_prompt)
         return response.text
@@ -24,20 +21,38 @@ def ask_gemini(system_prompt: str, user_prompt: str) -> str:
 
 def get_embedding(text: str) -> list:
     """
-    Generates a vector embedding for a given text using Gemini.
+    Generates a vector embedding for a given text.
+    Includes a retry mechanism and rate limit handling.
+    """
+    retries = 3
+    for attempt in range(retries):
+        try:
+            result = genai.embed_content(
+                model=EMBEDDING_MODEL,
+                content=text,
+                task_type="retrieval_document",
+                title="Code Snippet"
+            )
+            return result['embedding']
+        except Exception as e:
+            if "429" in str(e): # Rate limit error
+                time.sleep(2) # Wait 2 seconds and try again
+                continue
+            print(f"Error generating embedding: {e}")
+            return []
+    return []
+
+def get_query_embedding(text: str) -> list:
+    """
+    Embeds the user question (Task Type is different for queries).
     """
     try:
-        # Check if the embedding model needs to be updated too?
-        # Usually "models/text-embedding-004" is standard, but if that fails
-        # you might need to check available embedding models too.
-        # For now, keep it as is since the error was about generateContent.
         result = genai.embed_content(
             model=EMBEDDING_MODEL,
             content=text,
-            task_type="retrieval_document",
-            title="Code Snippet"
+            task_type="retrieval_query"
         )
         return result['embedding']
     except Exception as e:
-        print(f"Error generating embedding: {e}")
+        print(f"Error embedding query: {e}")
         return []
