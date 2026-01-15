@@ -32,9 +32,9 @@ build/
 "@ | Out-File -Encoding UTF8 .gitignore
  
 # frontend specific
-frontendnpx/node_modules/
-frontendnpx/.next/
-frontendnpx/dist/
-frontendnpx/build/
-frontendnpx/.env
-frontendnpx/.env.local
+frontend/node_modules/
+frontend/.next/
+frontend/dist/
+frontend/build/
+frontend/.env
+frontend/.env.local

@@ -9,17 +9,15 @@ interface ChatResponse {
 }
 
 export const api = {
-  /**
-   * Sends the GitHub URL to the backend for downloading and indexing.
-   */
-  loadRepo: async (githubUrl: string): Promise<RepoStats> => {
+  // Add reindex parameter (defaults to false)
+  loadRepo: async (githubUrl: string, reindex: boolean = false): Promise<RepoStats> => {
     try {
       const response = await axios.post<RepoStats>(`${API_BASE}/load-repo`, { 
-        github_url: githubUrl 
+        github_url: githubUrl,
+        reindex: reindex // Send it to backend
       });
       return response.data;
     } catch (error: any) {
-      // Extract the specific error message from the backend if available
       const message = error.response?.data?.detail || error.message;
       throw new Error(message);
     }
@@ -28,10 +26,12 @@ export const api = {
   /**
    * Sends a user query to the backend and returns the AI's answer.
    */
-  chat: async (query: string): Promise<string> => {
+  chat: async (query: string, model: string): Promise<string> => {
     try {
-      const response = await axios.post<ChatResponse>(`${API_BASE}/chat`, { 
-        query: query 
+      // Send model to backend
+      const response = await axios.post(`${API_BASE}/chat`, { 
+        query: query,
+        model: model 
       });
       return response.data.answer;
     } catch (error: any) {

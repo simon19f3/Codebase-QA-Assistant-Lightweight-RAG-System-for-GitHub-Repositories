@@ -1,24 +1,23 @@
 import google.generativeai as genai
 import time
 from config.settings import GEMINI_API_KEY, GENERATION_MODEL, EMBEDDING_MODEL
+from config.settings import DEFAULT_MODEL
 
 if not GEMINI_API_KEY:
     raise ValueError("GEMINI_API_KEY is not set")
 
 genai.configure(api_key=GEMINI_API_KEY)
 
-def ask_gemini(system_prompt: str, user_prompt: str) -> str:
-    """
-    Sends a combined prompt to Gemini and returns the text answer.
-    """
+def ask_gemini(system_prompt: str, user_prompt: str, model_name: str = DEFAULT_MODEL) -> str:
     try:
-        model = genai.GenerativeModel(GENERATION_MODEL)
+        # Use the requested model
+        model = genai.GenerativeModel(model_name)
         full_prompt = f"{system_prompt}\n\n{user_prompt}"
         response = model.generate_content(full_prompt)
         return response.text
     except Exception as e:
-        return f"Error communicating with Gemini: {str(e)}"
-
+        return f"Error communicating with Gemini ({model_name}): {str(e)}"
+    
 def get_embedding(text: str) -> list:
     """
     Generates a vector embedding for a given text.
