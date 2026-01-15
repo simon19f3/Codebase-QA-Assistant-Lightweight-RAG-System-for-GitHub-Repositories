@@ -2,7 +2,7 @@
 
 Chat with **any GitHub repository** — with real code understanding.
 
-Full-stack RAG application powered by **Smart Chunking**, architecture diagrams, and multi-LLM support (Gemini, OpenAI, DeepSeek, Grok).
+Full-stack RAG application powered by **Smart Chunking**, architecture diagrams, and multi-LLM support (Gemini, OpenAI, DeepSeek, Grok). Unlike standard chat tools, it understands code structure. It uses Smart Chunking to preserve function/class boundaries, generates System Architecture Diagrams automatically, and supports Multi-LLM switching (Gemini, OpenAI, DeepSeek, Grok).
 
 ## ✨ Key Features
 
@@ -114,9 +114,8 @@ graph TD
   * Git
 
 
-### Optional – One-liner style (for advanced users)
+## 🚀 Quick Start – Installation & Setup
 
-If you prefer shorter instructions:
 
 ```markdown
 ## Quick Start (TL;DR)
@@ -138,33 +137,33 @@ npm run dev
 ```
 📖 Usage Guide
 
-* Load a Repository\
+* Load a Repository
   1. Paste a GitHub repository URL (e.g. https://github.com/fastapi/fastapi)\
-  2. Click Load\
+  2. Click Load
   3. The system downloads, chunks, and indexes the repository
 
-* Performance Notes\
-  ⏳ First load takes time.\
+* Performance Notes
+  ⏳ First load takes time.
   ⚡ Subsequent loads use cached metadata.
 
-* View Architecture\
-  The system automatically generates a Mermaid architecture diagram.\
+* View Architecture
+  The system automatically generates a Mermaid architecture diagram.
   Use zoom and pan controls to explore the blueprint.
 
-* Chat with Context\
-  Ask questions like:\
-  “How does authentication work?”\
-  “Where is the database connection initialized?”\
+* Chat with Context
+  Ask questions like:
+  “How does authentication work?”
+  “Where is the database connection initialized?”
   Responses include file references with line numbers.
 
-* Quote & Reply\
-  1. Select any text from an AI response\
-  2. Click “Ask Codebase”\
+* Quote & Reply
+  1. Select any text from an AI response
+  2. Click “Ask Codebase”
   3. The quoted text appears in the input box for focused follow-ups
 
-* Force Re-Indexing\
-  If the remote repository changes:\
-  Click the Refresh (↻) icon in the sidebar\
+* Force Re-Indexing
+  If the remote repository changes:
+  Click the Refresh (↻) icon in the sidebar
   This forces a fresh download and re-index
 
 
