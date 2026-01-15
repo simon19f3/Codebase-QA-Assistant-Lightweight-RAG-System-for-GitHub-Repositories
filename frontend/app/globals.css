@@ -1,0 +1,125 @@
+@import "tailwindcss";
+
+/* ===============================
+   THEME TOKENS
+================================ */
+
+/* --- LIGHT MODE (Default) --- */
+:root {
+  /* --- LIGHT MODE VARIABLES --- */
+  --background: #ffffff;
+  --surface: #f4f4f4;       /* Light gray for bubbles/inputs */
+  --surface-muted: #f9f9f9; 
+  --surface-hover: #ececec;
+  --border: #e5e5e5;
+  --foreground: #0f172a;    /* Dark slate for text */
+  --foreground-muted: #64748b;
+  --primary: #10b981;       /* Emerald Green */
+}
+
+.dark {
+  /* --- DARK MODE VARIABLES --- */
+  --background: #212121;    /* ChatGPT Dark Background */
+  --surface: #2f2f2f;       /* Slightly lighter for cards/inputs */
+  --surface-muted: #171717; 
+  --surface-hover: #2f2f2f;
+  --border: #424242;        /* Subtle borders */
+  --foreground: #ececec;    /* PURE WHITE-ISH Text */
+  --foreground-muted: #b4b4b4;
+  --primary: #10b981;
+}
+
+body {
+  color: var(--foreground);
+  background: var(--background);
+  min-height: 100vh;
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
+
+/* --- Scrollbar Styling --- */
+::-webkit-scrollbar { width: 8px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--foreground-muted); }
+
+/* --- MARKDOWN STYLING (The Fix) --- */
+
+/* 1. Ensure paragraphs use the main foreground color (White in dark mode) */
+.markdown-content p {
+  margin-bottom: 0.8em;
+  line-height: 1.7;
+  color: var(--foreground); /* <--- THIS FIXES THE GRAY TEXT */
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  word-break: break-word; /* Critical for long file paths */
+  min-width: 0; /* Safety */
+
+}
+
+/* 2. Headers */
+.markdown-content h1, 
+.markdown-content h2, 
+.markdown-content h3 {
+  color: var(--foreground);
+  font-weight: 700;
+  margin-top: 1.2em;
+  margin-bottom: 0.6em;
+}
+
+/* 3. Bold Text */
+.markdown-content strong {
+  color: var(--foreground); /* Ensure bold text matches */
+  font-weight: 700;
+}
+
+/* 4. Code Blocks and Inline Code */
+.markdown-content code {
+  background-color: var(--surface); /* Matches input/card bg */
+  color: #d946ef; 
+  border: 1px solid var(--border);
+  padding: 0.2em 0.4em;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9em;
+  font-weight: 600;
+}
+
+/* Remove border for code in dark mode if preferred */
+.dark .markdown-content code {
+  border: none;
+  background-color: #383838;
+  /* Slightly lighter pink for better contrast in dark mode */
+  color: #e879f9; 
+}
+
+.markdown-content pre {
+  background-color: #0d0d0d; /* Always black/dark for code blocks */
+  color: #e2e8f0;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+  border: 1px solid var(--border);
+}
+
+.markdown-content pre code {
+  background-color: transparent !important;
+  border: none !important;
+  color: inherit !important;
+  padding: 0 !important;
+  font-weight: normal;
+}
+
+/* 5. Lists */
+.markdown-content ul {
+  list-style-type: disc;
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+  color: var(--foreground);
+}
+.markdown-content li {
+  margin-bottom: 0.25rem;
+}
